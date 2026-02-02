@@ -74,6 +74,17 @@ router.put("/:id", async (req, res) => {
       student &&
       typeof student === "string"
     ) {
+      const grupo = await (
+        await coleccion()
+      ).findOne({
+        _id: new ObjectId(req.params?.id),
+      });
+      if (!grupo) {
+        return res.status(404).json({ message: "Group not found" });
+      }
+      if ((grupo.students ?? []).length >= 20) {
+        return res.status(400).json({ message: "Group already has 20 students" });
+      }
       const result = await (
         await coleccion()
       ).updateOne(
