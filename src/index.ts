@@ -1,13 +1,7 @@
-import express from "express";
-import { connectMongoDB } from "./mongo";
-import routerPersonas from "./routes";
-import dotenv from "dotenv";
+import app from "./app";
 
-dotenv.config();
+const PORT = process.env.PORT || 3000;
 
-connectMongoDB();
-
-const app = express();
-app.use(express.json());
-app.use("/", routerPersonas);
-app.listen(3000, () => console.log("El API ha comenzado baby"));
+app.listen(PORT, () => {
+  console.log("El API ha comenzado baby 🚀");
+});

@@ -1,21 +1,34 @@
 import { Db, MongoClient } from "mongodb";
 
+let client: MongoClient | null = null;
+let db: Db | null = null;
 
-let client: MongoClient;
-let dB: Db;
 const dbName = "Vicio";
 
-export const connectMongoDB = async (): Promise<void> => {
-  try {
-    const mongoUrl = `mongodb+srv://${process.env.USER_MONGO}:${process.env.USER_PASSWORD}@${process.env.MONGO_CLUSTER}.3ta2r.mongodb.net/?appName=${process.env.MONGO_APP_NAME}`;
+export const connectMongoDB = async (): Promise<Db> => {
+  if (db) return db;
 
-    client = new MongoClient(mongoUrl);
+  const mongoUrl = `mongodb+srv://${process.env.USER_MONGO}:${process.env.USER_PASSWORD}@${process.env.MONGO_CLUSTER}.3ta2r.mongodb.net/?appName=${process.env.MONGO_APP_NAME}`;
+
+  try {
+    if (!client) {
+      client = new MongoClient(mongoUrl);
+    }
     await client.connect();
-    dB = client.db(dbName);
+
+    db = client.db(dbName);
     console.log("Connected to mongodb at db " + dbName);
+
+    return db;
   } catch (error) {
-    console.log("Error mongo: ", error);
+    console.error("Error mongo:", error);
+    throw error;
   }
 };
 
-export const getDb = ():Db => dB;
+export const getDb = (): Db => {
+  if (!db) {
+    throw new Error("Database not initialized. Call connectMongoDB first.");
+  }
+  return db;
+};
