@@ -9,5 +9,5 @@ connectMongoDB();
 
 const app = express();
 app.use(express.json());
-app.use("/api/elegirGrupoPracticas", routerPersonas);
+app.use("/", routerPersonas);
 app.listen(3000, () => console.log("El API ha comenzado baby"));
