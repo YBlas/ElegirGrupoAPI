@@ -26,9 +26,9 @@ export const connectMongoDB = async (): Promise<Db> => {
   }
 };
 
-export const getDb = (): Db => {
+export const getDb = async (): Promise<Db> => {
   if (!db) {
-    throw new Error("Database not initialized. Call connectMongoDB first.");
+    await connectMongoDB();
   }
-  return db;
+  return db!;
 };

@@ -3,11 +3,16 @@ import { getDb } from "./mongo";
 import { ObjectId } from "mongodb";
 
 const router = Router();
-const coleccion = () => getDb().collection<{ name: string; subject: string; students: string[] }>("GruposPracticas");
+const coleccion = async () =>
+  (await getDb()).collection<{
+    name: string;
+    subject: string;
+    students: string[];
+  }>("GruposPracticas");
 
 router.get("/", async (req, res) => {
   try {
-    const grupos = await coleccion().find().toArray();
+    const grupos = await (await coleccion()).find().toArray();
     res.json({
       grupos,
     });
@@ -19,7 +24,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const idDelParametro = req.params.id;
   if (idDelParametro.length == 24) {
-    const grupo = await coleccion().findOne({
+    const grupo = await (
+      await coleccion()
+    ).findOne({
       _id: new ObjectId(idDelParametro),
     });
     grupo
@@ -42,13 +49,15 @@ router.post(`/`, async (req, res) => {
       typeof groupName === "string" &&
       typeof subject === "string"
     ) {
-      const result = await coleccion().insertOne({
+      const result = await (
+        await coleccion()
+      ).insertOne({
         name: groupName,
         subject: subject,
         students: [],
       });
       const idMongo = result.insertedId;
-      const grupoCreado = await coleccion().findOne({ _id: idMongo });
+      const grupoCreado = await (await coleccion()).findOne({ _id: idMongo });
       res.status(201).json(grupoCreado);
     } else {
       res.status(400).json({ message: "Invalid input body" });
@@ -65,9 +74,11 @@ router.put("/:id", async (req, res) => {
       student &&
       typeof student === "string"
     ) {
-      const result = await coleccion().updateOne(
+      const result = await (
+        await coleccion()
+      ).updateOne(
         { _id: new ObjectId(req.params?.id) },
-        { $push: { students: student } }
+        { $push: { students: student } },
       );
       res.status(201).json(result);
     } else {
@@ -80,7 +91,9 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const result = await coleccion().deleteOne({
+    const result = await (
+      await coleccion()
+    ).deleteOne({
       _id: new ObjectId(req.params?.id),
     });
     res.json({ result });

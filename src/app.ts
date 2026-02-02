@@ -5,9 +5,6 @@ import { connectMongoDB } from "./mongo";
 
 dotenv.config();
 
-// IMPORTANT: run once, reused by serverless
-connectMongoDB();
-
 const app = express();
 app.use(express.json());
 app.use("/", routerPersonas);
