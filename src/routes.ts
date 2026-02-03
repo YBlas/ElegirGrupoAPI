@@ -85,7 +85,7 @@ router.put("/:id", async (req, res) => {
       if ((grupo.students ?? []).length >= 24) {
         return res
           .status(400)
-          .json({ message: "Group already has 20 students" });
+          .json({ message: "Group already has 24 students" });
       }
       const result = await (
         await coleccion()
